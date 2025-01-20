@@ -1,10 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cashierRoutes = require("./src/app/routes/cashier/cashierRoutes");
-const connectDB = require("./src/config/database");
-const session = require("express-session");
+const connectDB = require("./src/app/config/database");
 const dotenv = require("dotenv");
-const MongoStore = require("connect-mongo");
 const cors = require("cors");
 
 dotenv.config();
