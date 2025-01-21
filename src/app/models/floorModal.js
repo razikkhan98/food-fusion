@@ -2,6 +2,13 @@ const mongoose = require("mongoose");
 
 const floorSchema = new mongoose.Schema(
   {
+    restaurantName: {
+      type: String,
+      required: [true, "Restaurant name is required"],
+      unique: true,
+      trim: true,
+    },
+
     floorName: {
       type: String,
       required: [true, "Floor name is required"],
