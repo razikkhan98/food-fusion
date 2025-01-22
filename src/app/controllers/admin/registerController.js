@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 const userModel = require("../../models/userModel");
-const generateCode = require("../../../utils/code");
-const roleMapping = require("../../../utils/roleMapping");
+const generateCode = require("../../../app/utils/code");
+const roleMapping = require("../../../app/utils/roleMapping");
 
 /**
  * Register a new user, validate input data, and save the user to the database.

@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cashierRoutes = require("./src/app/routes/cashier/cashierRoutes");
+const amdminRoutes = require("./src/app/routes/admin/adminRoutes");
 const connectDB = require("./src/app/config/database");
 const dotenv = require("dotenv");
 const cors = require("cors");
@@ -22,9 +23,14 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Routes
-
+/** Routes */
+// cashier
 app.use("/foodskill/cashier", cashierRoutes);
+
+// admin
+app.use("/foodskill/admin", amdminRoutes);
+
+/** Routes end */
 
 // Starting the server
 
