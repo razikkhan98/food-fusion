@@ -3,17 +3,28 @@ const CustomerModal = require("../../models/customerModal");
 /**
  * Create a new customer
  * @param {Object} req - Express request object
- * @param {Object} req.body - Customer data (name, email, phoneNumber, table)
- * @param {Object} res - Express response object
+ * @param {Object} req.body - Customer data (customerName,customerEmail,customerPhoneNumber,customerTableId,)
+ * @param {Object} res - Express response message:(Customer registered successfully)
  */
 exports.createCustomer = async (req, res) => {
   try {
-    const { name, email, phoneNumber, table } = req.body;
+    const {
+      customerName,
+      customerEmail,
+      customerPhoneNumber,
+      customerTableId,
+    } = req.body;
 
-    const newCustomer = new CustomerModal({ name, email, phoneNumber, table });
+    await CustomerModal.create({
+      customerName,
+      customerEmail,
+      customerPhoneNumber,
+      customerTableId,
+    });
 
-    const savedCustomer = await newCustomer.save();
-    res.status(201).json({ success: true, data: savedCustomer });
+    res
+      .status(201)
+      .json({ success: true, message: "Customer registered successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
