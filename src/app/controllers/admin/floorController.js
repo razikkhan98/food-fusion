@@ -6,14 +6,18 @@ const FloorModal = require("../../models/floorModal");
  * @param {Object} req.body - Floor data (floorName, floorNumber, floorCapacity)
  * @param {Object} res - Express response object
  */
+
+
 exports.createFloor = async (req, res) => {
   try {
     const floor = await FloorModal.create(req.body);
-    res.status(201).json({ success: true, data: floor });
+    res.status(201).json({ success: true, message: "Add new floor successfully" ,data: floor });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+
+
 
 /**
  * Get all floors
@@ -28,6 +32,8 @@ exports.getFloors = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
 
 /**
  * Get a single floor by ID
@@ -48,6 +54,8 @@ exports.getFloorById = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
 
 /**
  * Update a floor by ID

@@ -61,7 +61,7 @@ exports.loginUser = asyncHandler(async (req, res) => {
   // If the user is found, login is successful
   res.json({
     success: true,
-    message: "Login successful.",
+    message: "Login successful",
     session,
     user: { fullname: user?.fullname, role: user?.role },
     accessToken: token,
