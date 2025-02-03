@@ -6,47 +6,33 @@ const floorController = require("../../controllers/cashier/floorController");
 const tablesController = require("../../controllers/cashier/tableController");
 const customerController = require("../../controllers/cashier/customerController");
 
-/** Auth Routes */
 
-// User Login (No Token Required)
-router.post("/login", loginController.loginUser);
+// Staff Login (No Token Required)
+router.post("/staff/login", loginController.loginUser);
 
-/** Auth Routes end */
-/** --------------------------------------------------------------- */
 
-/** Floor APIs */
 
-// Get All Floor
+// Get All Floor (Protected Routes)
 router.get("/getAllFloors", floorController.getFloors);
-// Get Table By Floor Id (Single Floor)
+// Get Table By Floor Id (Single Floor) (Protected Routes)
 router.get("/getFloorById/:id", floorController.getFloorById);
 
-/** Floor APIs end*/
 
-/** ---------------------------------------------------------------- */
 
-/** Table APIs*/
-
-// Get All Tables
+// Get All Tables (Protected Routes)
 router.get("/getAllTables", tablesController.getAllTables);
-// Get Table By Table Id (Single Table)
+// Get Table By Table Id (Single Table) (Protected Routes)
 router.get("/getTableById/:id", tablesController.getTableById);
 
-/** Table APIs end*/
 
-/** ---------------------------------------------------------------- */
 
-/** Customer APIs*/
 
-// Create Customer
+// Create Customer (Protected Routes)
 router.post("/CreateCustomer", customerController.createCustomer);
-// Get All Customer
+// Get All Customer (Protected Routes)
 router.get("/GetAllCustomers", customerController.getAllCustomers);
-// Get Customer By Customer Id (Single Customer)
+// Get Customer By Customer Id (Single Customer) (Protected Routes)
 router.get("/getCustomerById/:id", customerController.getCustomerById);
 
-/** Customer APIs end*/
-
-/** ---------------------------------------------------------------- */
 
 module.exports = router;

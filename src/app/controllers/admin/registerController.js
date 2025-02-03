@@ -21,6 +21,8 @@ const { generateCode } = require("../../../app/utils/code");
  * @param {number} [req.body.age] - The age of the user.
  * @param {Object} res - Express response object.
  */
+
+
 exports.register = asyncHandler(async (req, res, next) => {
   const {
     fullname,
@@ -42,8 +44,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     !mobileNum ||
     !address ||
     !role ||
-    !joining
-  ) {
+    !salary
+    ) {
     return res.json({ message: "All fields are required" });
   }
 
@@ -81,7 +83,7 @@ exports.register = asyncHandler(async (req, res, next) => {
 
     res.json({
       success: true,
-      message: "User registered successfully",
+      message: `${role} registered successfully`,
       user: {
         id: user._id,
         fullname: user.fullname,

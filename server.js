@@ -5,7 +5,6 @@ const amdminRoutes = require("./src/app/routes/admin/adminRoutes");
 const connectDB = require("./src/app/config/database");
 const dotenv = require("dotenv");
 const cors = require("cors");
-
 dotenv.config();
 
 // Connect to the database
@@ -23,17 +22,23 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-/** Routes */
+
 // cashier
-app.use("/foodskill/cashier", cashierRoutes);
+app.use("/food-fusion/cashier", cashierRoutes);
 
 // admin
-app.use("/foodskill/admin", amdminRoutes);
+app.use("/food-fusion/admin", amdminRoutes);
 
-/** Routes end */
 
 // Starting the server
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+
+
+
+
+
+

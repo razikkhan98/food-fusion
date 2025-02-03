@@ -24,7 +24,7 @@ const floorSchema = new mongoose.Schema(
     floorCapacity: {
       type: Number,
       required: [true, "Floor capacity is required"],
-      min: [1, "Floor capacity must be at least 1"],
+      min: [20, "Floor capacity must be at least 20"],
     },
     tables: [
       {
