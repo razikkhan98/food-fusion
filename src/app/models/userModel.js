@@ -39,17 +39,13 @@ const userSchema = new mongoose.Schema(
     },
     altNum: {
       type: String,
-      trim: true,
-      minlength: 10,
-      maxlength: 10,
+      default: null,
       match: [/^\d{10}$/, "Phone number must be exactly 10 digits"],
     },
     address: {
       type: String,
-      required: true,
       trim: true,
-      minlength: 10,
-      maxlength: 200,
+     
     },
     role: {
       type: String,
@@ -59,7 +55,6 @@ const userSchema = new mongoose.Schema(
     },
     joining: {
       type: String,
-      required: true,
       trim: true,
     },
     code: {
@@ -74,7 +69,6 @@ const userSchema = new mongoose.Schema(
     },
     age: {
       type: Number,
-      required: true,
       trim: true,
     },
   },

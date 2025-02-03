@@ -42,7 +42,6 @@ exports.register = asyncHandler(async (req, res, next) => {
     !email ||
     !password ||
     !mobileNum ||
-    !address ||
     !role ||
     !salary
     ) {
@@ -73,7 +72,7 @@ exports.register = asyncHandler(async (req, res, next) => {
       joining,
       salary,
       age,
-      code: altNum,
+      code: mobileNum,
     });
 
     // Generate code with role-based sequence
