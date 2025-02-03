@@ -42,14 +42,7 @@ const tableSchema = mongoose.Schema(
     floor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Floor",
-      required: true,
     },
-    customers: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Customer",
-      },
-    ],
   },
   {
     timestamps: true,
