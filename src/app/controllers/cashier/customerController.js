@@ -69,9 +69,7 @@ exports.getAllCustomers = async (req, res) => {
  */
 exports.getCustomerById = async (req, res) => {
   try {
-    const customer = await CustomerModal.findById(req.params.id).populate(
-      "table"
-    );
+    const customer = await CustomerModal.findById(req.params.id).populate("tableId");
     if (!customer) {
       return res
         .status(404)
