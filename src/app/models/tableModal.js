@@ -17,23 +17,23 @@ const tableSchema = mongoose.Schema(
       required: [true, "Number of chairs is required"],
     },
 
-    tableStatus: {
-      type: String,
-      enum: ["Cancelled", "Reserved", "Available", "Completed"],
-    },
+    // tableStatus: {
+    //   type: String,
+    //   enum: ["Cancelled", "Reserved", "Available", "Completed"],
+    // },
 
-    bookingDate: {
-      type: Date,
-    },
+    // bookingDate: {
+    //   type: Date,
+    // },
 
-    bookingStartTime: {
-      type: String,
-    },
+    // bookingStartTime: {
+    //   type: String,
+    // },
 
-    customerId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Customer",
-    },
+    // customerId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    // //   ref: "Customer",
+    // },
 
     no_of_person: {
       type: Number,
@@ -42,6 +42,12 @@ const tableSchema = mongoose.Schema(
     floor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Floor",
+      default: null
+    },
+    floorUid:{
+      type: String,
+      required: true,
+      unique: true
     },
   },
   {

@@ -12,26 +12,16 @@ exports.createTable = async (req, res) => {
       tableName,
       tableNumber,
       tableChairs,
-      tableStatus,
-      bookingDate,
-      bookingStartTime,
-      customerId,
       no_of_person,
-      floor,
-      customers,
+      floorUid
     } = req.body;
 
     const newTable = new TableModal({
       tableName,
       tableNumber,
       tableChairs,
-      tableStatus,
-      bookingDate,
-      bookingStartTime,
-      customerId,
       no_of_person,
-      floor,
-      customers,
+      floorUid
     });
 
     const savedTable = await newTable.save();

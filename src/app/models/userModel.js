@@ -70,7 +70,7 @@ const userSchema = new mongoose.Schema(
     age: {
       type: Number,
       trim: true,
-    },
+    }
   },
   { timestamps: true }
 );

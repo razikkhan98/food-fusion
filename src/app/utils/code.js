@@ -24,4 +24,17 @@ const generateCode = (role, sequence, mobileNum) => {
   return `${paddedSequence}${roleCode}${fullMobile}`;
 };
 
-module.exports = { generateCode };
+// const generatefllorUid = ()
+// const floorNumber = String(floorNumber);
+// const code = restaurantName.slice(0, 2) + floorName.slice(0,4) +floorNumber.slice(0,2);
+// console.log(code);
+
+  
+  const generateFloorUid = (restaurantName, floorName, floorNumber) => {
+    const floorNumberStr = String(floorNumber);
+  return `${restaurantName.slice(0, 4)}${floorName.slice(0, 4)}${floorNumberStr.slice(0, 2)}`;
+};
+
+
+
+module.exports = { generateCode, generateFloorUid };

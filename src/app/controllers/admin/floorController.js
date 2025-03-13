@@ -1,4 +1,5 @@
 const FloorModal = require("../../models/floorModal");
+const { generateFloorUid } = require("../../../app/utils/code");
 
 /**
  * Create a new floor
@@ -7,10 +8,36 @@ const FloorModal = require("../../models/floorModal");
  * @param {Object} res - Express response object
  */
 
-
 exports.createFloor = async (req, res) => {
   try {
-    const floor = await FloorModal.create(req.body);
+    const { restaurantName, floorName, floorNumber, floorCapacity } = req.body;
+
+    // Check if all required fields are provided
+    if (!restaurantName || !floorName || !floorNumber || !floorCapacity) {
+      return res.status(400).json({
+        success: false,
+        message: "All required fields: restaurantName, floorName, floorNumber, or floorCapacity.",
+      });
+    }
+    
+    //Generate floor UID
+    const floorUid = generateFloorUid(restaurantName, floorName, floorNumber);
+    console.log(floorUid);
+    
+        // Create new user
+        const floor = await FloorModal.create({
+          restaurantName,
+          floorName,
+          floorNumber,
+          floorCapacity,
+          floorUid,
+        });
+        console.log(floor);
+        
+        // Save user to the database
+        // await floor.save();
+    
+
     res.status(201).json({ success: true, message: "Add new floor successfully" ,data: floor });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -26,7 +53,25 @@ exports.createFloor = async (req, res) => {
  */
 exports.getFloors = async (req, res) => {
   try {
-    const floors = await FloorModal.find();
+    // const floors = await FloorModal.find();
+
+    const floors = await FloorModal.aggregate([
+      {
+        $lookup: {
+          from: "tables", 
+          localField: "tables", 
+          foreignField: "_id", 
+          as: "tableDetails", 
+            }, 
+          },
+          {
+          $unwind: {
+            path: "$tableDetails",
+            preserveNullAndEmptyArrays: true, 
+          },
+        },
+      ]);
+
     res.status(200).json({ success: true, data: floors });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

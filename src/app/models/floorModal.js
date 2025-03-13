@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const floorSchema = new mongoose.Schema(
   {
+      floorUid:{
+        type: String,
+        // required: true,
+        unique: true
+      },
+
     restaurantName: {
       type: String,
       required: [true, "Restaurant name is required"],
@@ -30,7 +36,8 @@ const floorSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Table",
-      },
+        default: null
+      }
     ],
   },
   {
