@@ -5,6 +5,7 @@ const loginController = require("../../controllers/admin/loginController");
 const floorController = require("../../controllers/cashier/floorController");
 const tablesController = require("../../controllers/cashier/tableController");
 const customerController = require("../../controllers/cashier/customerController");
+const menuController = require("../../controllers/cashier/menuController");
 
 // Token for routes
 const { validateToken } = require("../../middlewares/validateTokenHandler");
@@ -36,6 +37,15 @@ router.post("/createCustomer",validateToken, customerController.createCustomer);
 router.get("/GetAllCustomers",validateToken, customerController.getAllCustomers);
 // Get Customer By Customer Id (Single Customer) (Protected Routes)
 router.get("/getCustomerById/:id",validateToken, customerController.getCustomerById);
+
+
+// Add Menu 
+router.post("/createMenu",menuController.addMenu);
+// Route to search for a menu item by name or code
+// router.get('/menu/search', menuController.searchMenu);
+
+
+
 
 
 module.exports = router;

@@ -24,17 +24,33 @@ const generateCode = (role, sequence, mobileNum) => {
   return `${paddedSequence}${roleCode}${fullMobile}`;
 };
 
-// const generatefllorUid = ()
-// const floorNumber = String(floorNumber);
-// const code = restaurantName.slice(0, 2) + floorName.slice(0,4) +floorNumber.slice(0,2);
-// console.log(code);
 
-  
+// Generate Floor uid 
+// Example :- zomaSec2  
   const generateFloorUid = (restaurantName, floorName, floorNumber) => {
     const floorNumberStr = String(floorNumber);
   return `${restaurantName.slice(0, 4)}${floorName.slice(0, 4)}${floorNumberStr.slice(0, 2)}`;
 };
 
 
+// // Generate code from the name (first letters of the first two words)
+// const generateMenuCode = (name) => {
+//   const words = name.split(' ');
+//   const code = words.length >= 2 ? `${words[0][0]} ${words[1][0]}` : words[0][0];
+//   return code.toUpperCase();  // Ensures that code is in uppercase (e.g., "C P")
+// };
 
-module.exports = { generateCode, generateFloorUid };
+const generateMenuCode = (name) => {
+  if (!name || typeof name !== 'string' || name.trim() === '') {
+    throw new Error('Invalid menu name');
+  }
+
+  const words = name.split(' ').filter(word => word.length > 0);  
+  const code = words.length >= 2 ? `${words[0][0]} ${words[1][0]}` : words[0][0]; // Use first letters of the first two words
+  return code.toUpperCase();  //  The code in uppercase (e.g., "C P")
+};
+
+
+
+
+module.exports = { generateCode, generateFloorUid, generateMenuCode };

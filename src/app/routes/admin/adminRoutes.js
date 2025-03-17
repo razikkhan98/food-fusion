@@ -19,7 +19,7 @@ router.post("/staff/login", loginController.loginUser);
 // Create Floor (Protected Routes)
 router.post("/createFloor", floorController.createFloor);
 // Get All Floor (Protected Routes)
-router.get("/getAllFloors", floorController.getFloors);
+router.get("/getAllFloors", floorController.getAllFloors); 
 // Get Table By Floor Id (Single Floor)  (Protected Routes)
 router.get("/getFloorById/:id", floorController.getFloorById);
 // Update Floor By Floor Id (Single Floor) (Protected Routes)

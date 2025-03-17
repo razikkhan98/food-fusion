@@ -30,10 +30,10 @@ const tableSchema = mongoose.Schema(
     //   type: String,
     // },
 
-    // customerId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    // //   ref: "Customer",
-    // },
+    customerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Customer",
+    },
 
     no_of_person: {
       type: Number,

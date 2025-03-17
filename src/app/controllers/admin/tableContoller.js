@@ -1,9 +1,10 @@
+const floorModal = require("../../models/floorModal");
 const TableModal = require("../../models/tableModal");
 
 /**
  * Create a new table
  * @param {Object} req - Express request object
- * @param {Object} req.body - Table data (tableName, tableNumber, tableChairs, tableStatus, bookingDate, bookingStartTime, customerId, no_of_person, floor, customers)
+ * @param {Object} req.body - Table data (tableName, tableNumber, tableChairs,  customerId, no_of_person, floor, customers)
  * @param {Object} res - Express response object
  */
 exports.createTable = async (req, res) => {
@@ -13,18 +14,51 @@ exports.createTable = async (req, res) => {
       tableNumber,
       tableChairs,
       no_of_person,
+      floorId,
       floorUid
     } = req.body;
+
+    // Check if the floorId exists
+    const floor = await floorModal.findById(floorId);
+    if (!floor) {
+      res.status(404).json({
+        success: false,
+        message: `No floor found with ID: ${floorId}`,
+      });
+      return;
+    }
+
+    // Check if the table number is already in use
+    const existingTable = await TableModal.findOne({
+      tableNumber,
+      floor: floor._id,
+    });
+    if (existingTable) {
+      res.status(400).json({
+        success: false,
+        message: `A table with number ${tableNumber} already exists.`,
+      });
+      return;
+    }
 
     const newTable = new TableModal({
       tableName,
       tableNumber,
       tableChairs,
       no_of_person,
+      floor: floor._id,
       floorUid
     });
 
     const savedTable = await newTable.save();
+
+    // Update the floor by adding the tableId to its tables array
+    floor.tables = floor.tables || [];
+    floor.tables.push(savedTable._id);  // Add the newly created table's ID to the floor's tables array
+
+    // Save the updated floor
+    await floor.save();
+
     res.status(201).json({ success: true, data: savedTable });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -40,8 +74,8 @@ exports.getAllTables = async (req, res) => {
   try {
     const tables = await TableModal.find()
       .populate("customerId")
-      .populate("floor");
-      // .populate("customers");
+      .populate("floor")
+    // .populate("customers");
     res.status(200).json({ success: true, data: tables });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -59,7 +93,7 @@ exports.getTableById = async (req, res) => {
     const table = await TableModal.findById(req.params.id)
       .populate("customerId")
       .populate("floor")
-      // .populate("customers");
+    // .populate("customers");
     if (!table) {
       return res
         .status(404)
@@ -87,7 +121,7 @@ exports.updateTable = async (req, res) => {
     )
       .populate("customerId")
       .populate("floor")
-      // .populate("customers");
+    // .populate("customers");
     if (!updatedTable) {
       return res
         .status(404)
