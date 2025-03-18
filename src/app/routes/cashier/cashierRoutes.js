@@ -6,6 +6,7 @@ const floorController = require("../../controllers/cashier/floorController");
 const tablesController = require("../../controllers/cashier/tableController");
 const customerController = require("../../controllers/cashier/customerController");
 const menuController = require("../../controllers/cashier/menuController");
+const orderController = require("../../controllers/cashier/orderController");
 
 // Token for routes
 const { validateToken } = require("../../middlewares/validateTokenHandler");
@@ -42,10 +43,12 @@ router.get("/getCustomerById/:id",validateToken, customerController.getCustomerB
 // Add Menu 
 router.post("/createMenu",menuController.addMenu);
 // Route to search for a menu item by name or code
-// router.get('/menu/search', menuController.searchMenu);
+router.get('/menu/search', menuController.searchMenu);
 
 
-
-
+// All Previous Order in this customer 
+// router.post("/previous/order", orderController.createOrder);
+// Get All Prevoius Order
+// router.get("/getAllOrder", orderController.getAllOrder);
 
 module.exports = router;

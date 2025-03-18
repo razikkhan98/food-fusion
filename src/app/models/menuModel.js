@@ -21,21 +21,22 @@ const SubcategorySchema = new mongoose.Schema({
   
   // Schema for Categories
   const CategorySchema = new mongoose.Schema({
-    // id: { type: Number, required: true },
     image: { type: String },
+    name: { type: String, required: true },
     category: { type: String, required: true },
+    menuCode: { type: String, required: true },
     categoriesTotalIteam : { type: Number },
     subcategories: [SubcategorySchema],
   });
 
 
-  // The Menu model (Main model for menu items)
-const MenuSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  category: { type: String, required: true },
-  menuCode: { type: String, required: true },
-  subcategories: [SubcategorySchema],  // Array of subcategories
-});
+//   // The Menu model (Main model for menu items)
+// const MenuSchema = new mongoose.Schema({
+//   name: { type: String, required: true },
+//   category: { type: String, required: true },
+//   menuCode: { type: String, required: true },
+//   subcategories: [SubcategorySchema],  // Array of subcategories
+// });
 
 
-module.exports = mongoose.model('Menu', MenuSchema);
+module.exports = mongoose.model('Menu', CategorySchema);

@@ -14,6 +14,7 @@ exports.createCustomer = async (req, res) => {
       customerEmail,
       customerPhoneNumber,
       tableId,
+      tableNumber,
       customerStatus,
       orderType,
     } = req.body;
@@ -24,11 +25,18 @@ exports.createCustomer = async (req, res) => {
         .json({ success: false, message: "All fields are required" });
     }
 
+  
+    // const require = await CustomerModal.find({ orderType: "Dine in" })
+    // if (require) {
+    //   return res.status(400).json({ message: "table number is required" });
+    // }
+
     const customer = await CustomerModal.create({
       customerName,
       customerEmail,
       customerPhoneNumber,
       tableId,
+      tableNumber,
       customerStatus,
       orderType,
     });

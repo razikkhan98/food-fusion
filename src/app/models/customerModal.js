@@ -28,23 +28,39 @@ const customerSchema = new mongoose.Schema(
       minlength: 10,
       maxlength: 10,
     },
-    customerStatus: {
-      type: String,
-      trim: true,
-      required: true,
-      default: "Order pending",
-      enum: [
-        "Order pending",
-        "Order making",
-        "Table reserved",
-        "Order completed",
-      ],
-    },
     orderType: {
       type: String,
       required: true,
       default: "Dine in",
       enum: ["Dine in", "Take away", "Delivery"],
+    },
+    tableNumber: {
+      type: Number,
+      // required: true 
+    },
+
+    date : {
+       type: Date
+    },
+
+    time: {
+       type: String
+      },
+
+    customerStatus: {
+      type: String,
+      trim: true,
+      // required: true,
+      // default: "Order pending",
+      enum: [
+        "Order pending",
+        "Order making",
+        "Table reserved",
+        "Order completed"
+      ],
+    },
+    deliveryAddress: {
+      type: String
     },
     orders: [
       {
