@@ -17,7 +17,6 @@ const customerSchema = new mongoose.Schema(
     customerCountryCode: {
       type: String,
       trim: true,
-      // required: true,
       default: "+91",
     },
     customerPhoneNumber: {
@@ -35,8 +34,8 @@ const customerSchema = new mongoose.Schema(
       enum: ["Dine in", "Take away", "Delivery"],
     },
     tableNumber: {
-      type: Number,
-      // required: true 
+      type: Number, 
+      // required: function() { return this.orderType === 'Dine in'; }
     },
 
     date : {
@@ -51,8 +50,9 @@ const customerSchema = new mongoose.Schema(
       type: String,
       trim: true,
       // required: true,
-      // default: "Order pending",
+      default: "empty",
       enum: [
+        "empty",
         "Order pending",
         "Order making",
         "Table reserved",
@@ -60,7 +60,8 @@ const customerSchema = new mongoose.Schema(
       ],
     },
     deliveryAddress: {
-      type: String
+      type: String,
+      default: null
     },
     orders: [
       {

@@ -43,7 +43,7 @@ router.get("/getCustomerById/:id",validateToken, customerController.getCustomerB
 // Add Menu 
 router.post("/createMenu",menuController.addMenu);
 // Route to search for a menu item by name or code
-router.get('/menu/search', menuController.searchMenu);
+// router.get('/menu/search', menuController.searchMenu);
 
 
 // All Previous Order in this customer 
