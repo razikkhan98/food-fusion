@@ -123,3 +123,19 @@ res.status(400).json({message: "Add Menu Successfully!", data: newMenu});
   res.status(500).json({ message: "Failed to create Menu", error: error.message });
 }
  };
+
+
+ /**
+  * Retrieve all menu
+  * @param {Object} req - Express request object
+  * @param {Object} res - Express response object
+  */
+ exports.getAllMenu = async (req ,res) => {
+     try {
+         const customerMenu = await menuModel.find();
+         res.status(200).json({ success: true, data: customerMenu });
+     } catch (error) {
+         res.status(500).json({ success: false, message: error.message });
+     }
+ };
+ 

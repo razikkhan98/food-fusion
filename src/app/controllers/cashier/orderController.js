@@ -1,87 +1,49 @@
-const asyncHandler = require("express-async-handler");
-const orderModel = require("../../models/orderModel");
-const menuModel = require("../../models/menuModel");
 
-// Create a new order
-exports.createOrder = asyncHandler(async (req, res) => {
-    try {
-        const {
-            customerName,
-            customerNumber,
-            customerEmail,
-            deliveryAddress,
-            customerStatus,
-            ordeDate,
-            orderTime,
-            fullMenus
-        } = req.body;
 
-        // Validation
-        if (!customerName &&
-            !customerNumber &&
-            !customerEmail &&
-            !deliveryAddress &&
-            !customerStatus &&
-            !fullMenus
-        ) {
-            return res.status(400).json({ message: "All fields are required!" });
-        }
+// exports.userOrder = async (req, res) => {
+//   try {
+//     const { tableNumber, items } = req.body;
 
-        // Check Email already exists or not
-        const exitingEmail = await orderModel.findOne({ customerEmail })
-        if (exitingEmail) {
-            return res.status(400).json({ message: 'Email already exists' });
-        }
-
-// // Check if the floorId exists
-//     const menu = await menuModel.findById(fullMenus);
-//     if (!menu) {
-//       res.status(404).json({
-//         success: false,
-//         message: `No menu found with ID: ${fullMenus}`,
-//       });
-//       return;
+//     // Validation
+//     if (!tableNumber || !items || items.length === 0) {
+//       return res.status(400).json({ message: 'Table number and items are required' });
 //     }
+    
+//     // Generate Order ID 
+//     const orderID = generateOrderId();
+//     console.log(orderID);
 
-        const order = await orderModel.create({
-            customerName,
-            customerNumber,
-            customerEmail,
-            deliveryAddress,
-            customerStatus,
-            ordeDate,
-            orderTime,
-            fullMenus
-        });
+//     const newOrder = new orderModel({
+//       orderID,
+//       tableNumber,
+//       items,
+//       status: "making"
+//     });
 
-        await order.save();
-        res.status(201).json({
-            success: true,
-            message: "Pervious Order generated successfully",
-            // data: PreviousOrder
-        });
+//     await newOrder.save();
+
+//     return res.status(201).json({ success: true, message: "Order send to kitchen", orderID, data: newOrder });
+//   } catch (error) {
+//     res.status(400).json({ success: false, message: error.message });
+//   }
+// };
 
 
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "Failed to create previous order",
-            error: error.message
-        });
-    }
+
+
+const expressAsyncHandler = require("express-async-handler");
+const orderModel = require("../../models/orderModal");
+const generateOrderId = require("../../utils/code");
+
+//  Create order send to kitchen
+exports.userOrder = expressAsyncHandler (async (req, res) => {
+  try {
+    const orderId = await generateOrderId(); // Generate Order ID
+    const newOrder = new orderModel({ ...req.body, orderID: orderId });
+   console.log(orderId)
+    const savedOrder = await newOrder.save();
+    res.status(201).json({ success: true, message: "Order send to kitchen", order: savedOrder });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error creating order", error: error.message });
+  }
 });
-
-
-/**
- * Retrieve all customers
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-exports.getAllOrder = async (req, res) => {
-    try {
-        const customerOrder = await orderModel.find().populate("fullMenus");
-        res.status(200).json({ success: true, data: customerOrder });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-};

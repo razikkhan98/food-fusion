@@ -19,10 +19,10 @@ exports.createCustomer = async (req, res) => {
       tableNumber,
       deliveryAddress
     } = req.body;
-    
+
     if (!orderType) {
       return res
-      .status(404)
+        .status(404)
         .json({ success: false, message: "All fields are required" });
     }
 
@@ -30,23 +30,23 @@ exports.createCustomer = async (req, res) => {
     if (orderType === 'Dine in' && !tableNumber) {
       return res.status(400).json({ message: "Table number is required for dine-in orders" });
     }
-    
+
     if (orderType === 'Delivery' && !deliveryAddress) {
       return res.status(400).json({ message: "Address is required for delivery orders" });
     }
-    
-  
+
+
     // If orderType is "Dine in", check if the tableNumber already exists
     if (orderType === 'Dine in') {
-        const existingTable = await TableModal.findOne({ tableNumber });
-        console.log(existingTable);
+      const existingTable = await TableModal.findOne({ tableNumber });
+      console.log(existingTable);
 
-        if (existingTable && existingTable.status === 'reserved') {
-            return res.status(400).json({ message: "This table is already reserved" });
+      if (existingTable && existingTable.status === 'reserved') {
+        return res.status(400).json({ message: "This table is already reserved" });
       }
     }
-    
 
+    // Add new costomer
     const customer = await CustomerModal.create({
       customerName,
       customerEmail,
@@ -58,7 +58,7 @@ exports.createCustomer = async (req, res) => {
       deliveryAddress: orderType === "Delivery" ? deliveryAddress : null,
     });
     await customer.save();
-    
+
 
     // const table = await TableModal.findById({ _id: tableId });
     // console.log("findTable: ", table);
@@ -75,7 +75,7 @@ exports.createCustomer = async (req, res) => {
         { new: true }
       );
     }
-    
+
 
     res.status(201).json({ success: true, message: "Customer registered successfully", data: customer });
   } catch (error) {

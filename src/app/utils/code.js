@@ -33,13 +33,7 @@ const generateCode = (role, sequence, mobileNum) => {
 };
 
 
-// // Generate code from the name (first letters of the first two words)
-// const generateMenuCode = (name) => {
-//   const words = name.split(' ');
-//   const code = words.length >= 2 ? `${words[0][0]} ${words[1][0]}` : words[0][0];
-//   return code.toUpperCase();  // Ensures that code is in uppercase (e.g., "C P")
-// };
-
+// Generate Menu Code
 const generateMenuCode = (name) => {
   if (!name || typeof name !== 'string' || name.trim() === '') {
     throw new Error('Invalid menu name');
@@ -53,4 +47,14 @@ const generateMenuCode = (name) => {
 
 
 
-module.exports = { generateCode, generateFloorUid, generateMenuCode };
+// Generate order Id
+const generateOrderId = async () => {
+  const lastOrder = await orderModel.findOne().sort({ createdAt: -1 }); // Get last order
+  const lastOrderId = lastOrder ? parseInt(lastOrder.order.replace("ORD", "")) : 1000;
+  return `ORD${lastOrderId + 1}`;
+};
+
+
+
+
+module.exports = { generateCode, generateFloorUid, generateMenuCode ,generateOrderId};
