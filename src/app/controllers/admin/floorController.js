@@ -11,6 +11,7 @@ const { generateFloorUid } = require("../../../app/utils/code");
 exports.createFloor = async (req, res) => {
   try {
     const { restaurantName, floorName, floorNumber, floorCapacity } = req.body;
+    
     // Check if all required fields are provided
     if (!restaurantName || !floorName || !floorNumber || !floorCapacity) {
       return res.status(400).json({

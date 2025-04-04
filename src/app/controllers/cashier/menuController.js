@@ -101,7 +101,7 @@
 
 // Cashier Add Menu 
 const menuModel = require("../../models/menuModel");
- exports. addMenu = async (req , res)=>{
+ exports.addMenu = async (req , res)=>{
 try{
 const menuData = req.body;
 

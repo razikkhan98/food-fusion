@@ -1,3 +1,4 @@
+// const orderModel = require("../../app/models/orderModal");
 /**
  * Generates a unique code based on the role, mobile number, and role ID.
  *
@@ -47,14 +48,18 @@ const generateMenuCode = (name) => {
 
 
 
-// Generate order Id
-const generateOrderId = async () => {
-  const lastOrder = await orderModel.findOne().sort({ createdAt: -1 }); // Get last order
-  const lastOrderId = lastOrder ? parseInt(lastOrder.order.replace("ORD", "")) : 1000;
-  return `ORD${lastOrderId + 1}`;
-};
+// // Generate order Id
 
+// const generateOrderId = async () => {
+  
+//   const counter = await orderModel.findByIdAndUpdate(
+//     { _id: 'orderID' },
+//     { $inc: { sequence_value: 1 } }, // Atomic increment
+//     { new: true, upsert: true }      // Create if not exists
+//   );
+// console.log(counter);
+//   return `ORD${counter.sequence_value}`
+// };
 
-
-
-module.exports = { generateCode, generateFloorUid, generateMenuCode ,generateOrderId};
+// generateOrderId
+module.exports = { generateCode, generateFloorUid, generateMenuCode };

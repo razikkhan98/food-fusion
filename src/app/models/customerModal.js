@@ -49,7 +49,7 @@ const customerSchema = new mongoose.Schema(
     customerStatus: {
       type: String,
       trim: true,
-      // required: true,
+      required: true,
       default: "empty",
       enum: [
         "empty",

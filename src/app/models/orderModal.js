@@ -3,7 +3,7 @@ const mongoose= require("mongoose");
 const orderSchema = new mongoose.Schema({
   orderID: {
      type: String, 
-     required: true, 
+   //   required: true, 
      unique: true 
     },
   tableNumber: {
@@ -18,6 +18,10 @@ const orderSchema = new mongoose.Schema({
      type: String, 
      default: 'pending' 
     },
+   //   sequence_value: { 
+   //    type: Number, 
+   //    default: 1000 
+   // },
   createdAt: {
      type: Date, 
      default: Date.now
