@@ -67,7 +67,7 @@ exports.createCustomer = async (req, res) => {
     // if (customer?.orderType === "Dine in") table.tableStatus = "Reserved";
 
 
-    // If it's a Dine in order, update the table status to 'reserved'
+    // If Dine in order, update the table status to 'reserved'
     if (orderType === 'Dine in' && tableNumber) {
       const table = await TableModal.findOneAndUpdate(
         { tableNumber },

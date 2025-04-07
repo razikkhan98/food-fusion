@@ -3,7 +3,7 @@ const previousOrderModel = require("../../models/previousOrderModel");
 const menuModel = require("../../models/menuModel");
 
 // Create a new order
-exports.createOrder = asyncHandler(async (req, res) => {
+exports.createPreviousOrder = asyncHandler(async (req, res) => {
     try {
         const {
             customerName,

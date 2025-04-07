@@ -29,6 +29,7 @@ exports.billingOrder = asyncHandler(async (req, res) => {
     if (!customer){
         return res.status(200).json({message: "Customer ID not found"});
     }
+    console.log(customer)
 
     // const menu = await menuModel.findById(menuID);
     // if (!menu){

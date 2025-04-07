@@ -55,7 +55,7 @@ const menuSchema = new mongoose.Schema({
   // menuID: { type: mongoose.Schema.Types.ObjectId },
   floorName: String,  
   tableNumber: Number, 
-  orderID: { type: Number, required: true },
+  orderID: { type: Number, default: null},
   categories: [
     {
       categoriesName: { type: String, required: true },

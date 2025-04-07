@@ -6,10 +6,10 @@ const floorController = require("../../controllers/cashier/floorController");
 const tablesController = require("../../controllers/cashier/tableController");
 const customerController = require("../../controllers/cashier/customerController");
 const menuController = require("../../controllers/cashier/menuController");
-// const previousOrderController = require("../../controllers/cashier/previousOrderController");
+const previousOrderController = require("../../controllers/cashier/previousOrderController");
 const orderController = require("../../controllers/cashier/orderController");
 const billController = require("../../controllers/cashier/billController");
-
+const paymentController = require("../../controllers/cashier/paymentController");
 
 // Token for routes
 const { validateToken } = require("../../middlewares/validateTokenHandler");
@@ -54,15 +54,20 @@ router.get("/getAllMenu",menuController.getAllMenu);
 router.post("/orderSendtoKitchen", orderController.userOrder) 
 
 // All Previous Order in this customer 
-// router.post("/previous/order", orderController.createOrder);
+// router.post("/previous/order", previousOrderController.createPreviousOrder);
 // Get All Prevoius Order
-// router.get("/getAllOrder", orderController.getAllOrder);
+// router.get("/getAllPreviousOrder", previousOrderController.getAllOrder);
 
 
 // Billing 
 router.post("/bill", billController.billingOrder);
 // Get All Bills
 router.get("/getAllBilling",billController.getAllBill);
+
+// Payment 
+router.post("/payment", paymentController.userPayment);
+// Get All Paymnet
+router.get("/getAllPayments", paymentController.getAllPayments);
 
 
 module.exports = router;
