@@ -10,7 +10,7 @@ exports.getAllTables = async (req, res) => {
     const tables = await TableModal.find()
       .populate("customerId")
       .populate("floor")
-      .populate("customers");
+      // .populate("customers");
     res.status(200).json({ success: true, data: tables });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -28,7 +28,7 @@ exports.getTableById = async (req, res) => {
     const table = await TableModal.findById(req.params.id)
       .populate("customerId")
       .populate("floor")
-      .populate("customers");
+      // .populate("customers");
     if (!table) {
       return res
         .status(404)

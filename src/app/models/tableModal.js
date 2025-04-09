@@ -2,46 +2,40 @@ const mongoose = require("mongoose");
 
 const tableSchema = mongoose.Schema(
   {
-    tableName: {
-      type: String,
-      required: [true, "Table name is required"],
+    totalTable: {  
+      type: Number,
+      required: true,
     },
 
     tableNumber: {
       type: Number,
-      required: [true, "Table number is required"],
+      required: true,
     },
 
-    tableChairs: {
+    totalChairs: {
       type: Number,
-      required: [true, "Number of chairs is required"],
+      required: true,
     },
-
-    tableStatus: {
-      type: String,
-      enum: ["Cancelled", "Reserved", "Available", "Completed"],
+    capacity: {
+      type: Number,
     },
-
-    bookingDate: {
-      type: Date,
+    floorNumber: {
+      type: Number,
+      required: true,
     },
-
-    bookingStartTime: {
-      type: String,
-    },
-
     customerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
     },
-
-    no_of_person: {
-      type: Number,
+    floorUid:{
+      type: String,
+      required: true,
+      unique: true
     },
-
     floor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Floor",
+      default: null
     },
   },
   {

@@ -17,34 +17,42 @@ const customerSchema = new mongoose.Schema(
     customerCountryCode: {
       type: String,
       trim: true,
-      // required: true,
       default: "+91",
     },
-    customerPhoneNumber: {
+    customerNumber: {
       type: String,
       trim: true,
-      required: true,
+      // required: true,
       match: [/^\d{10}$/, "Phone number must be exactly 10 digits"],
       minlength: 10,
       maxlength: 10,
-    },
-    customerStatus: {
-      type: String,
-      trim: true,
-      required: true,
-      default: "Order pending",
-      enum: [
-        "Order pending",
-        "Order making",
-        "Table reserved",
-        "Order completed",
-      ],
     },
     orderType: {
       type: String,
       required: true,
       default: "Dine in",
       enum: ["Dine in", "Take away", "Delivery"],
+    },
+    tableNumber: {
+      type: Number, 
+    },
+
+    customerStatus: {
+      type: String,
+      trim: true,
+      // required: true,
+      default: "Order pending",
+      enum: [
+        "empty",
+        "Order pending",
+        "Order making",
+        "Table reserved",
+        "Order completed"
+      ],
+    },
+    deliveryAddress: {
+      type: String,
+      default: null
     },
     orders: [
       {

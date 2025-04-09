@@ -37,7 +37,7 @@ exports.createCustomer = async (req, res) => {
  */
 exports.getAllCustomers = async (req, res) => {
   try {
-    const customers = await CustomerModal.find().populate("table");
+    const customers = await CustomerModal.find().populate("tableId");
     res.status(200).json({ success: true, data: customers });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -52,9 +52,7 @@ exports.getAllCustomers = async (req, res) => {
  */
 exports.getCustomerById = async (req, res) => {
   try {
-    const customer = await CustomerModal.findById(req.params.id).populate(
-      "table"
-    );
+    const customer = await CustomerModal.findById(req.params.id).populate("tableId");
     if (!customer) {
       return res
         .status(404)
@@ -79,7 +77,7 @@ exports.updateCustomer = async (req, res) => {
       req.params.id,
       req.body,
       { new: true }
-    ).populate("table");
+    ).populate("tableId");
     if (!updatedCustomer) {
       return res
         .status(404)
