@@ -19,10 +19,10 @@ const customerSchema = new mongoose.Schema(
       trim: true,
       default: "+91",
     },
-    customerPhoneNumber: {
+    customerNumber: {
       type: String,
       trim: true,
-      required: true,
+      // required: true,
       match: [/^\d{10}$/, "Phone number must be exactly 10 digits"],
       minlength: 10,
       maxlength: 10,
@@ -35,22 +35,13 @@ const customerSchema = new mongoose.Schema(
     },
     tableNumber: {
       type: Number, 
-      // required: function() { return this.orderType === 'Dine in'; }
     },
-
-    date : {
-       type: Date
-    },
-
-    time: {
-       type: String
-      },
 
     customerStatus: {
       type: String,
       trim: true,
-      required: true,
-      default: "empty",
+      // required: true,
+      default: "Order pending",
       enum: [
         "empty",
         "Order pending",

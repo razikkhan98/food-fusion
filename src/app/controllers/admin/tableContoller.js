@@ -10,23 +10,25 @@ const TableModal = require("../../models/tableModal");
 exports.createTable = async (req, res) => {
   try {
     const {
-      tableName,
+      totalTable,
       tableNumber,
-      tableChairs,
-      no_of_person,
+      totalChairs,
+      capacity,
+      floorNumber,
       floorId,
       floorUid
     } = req.body;
 
-    // Check if the floorId exists
-    const floor = await floorModal.findById(floorId);
-    if (!floor) {
-      res.status(404).json({
-        success: false,
-        message: `No floor found with ID: ${floorId}`,
-      });
-      return;
-    }
+      
+      // Check if the floorId exists
+      const floor = await floorModal.findById(floorId);
+      if (!floor) {
+        res.status(404).json({
+          message: `No floor found with ID: ${floorId}`,
+        });
+        return;
+      }
+      
 
     // Check if the table number is already in use
     const existingTable = await TableModal.findOne({
@@ -42,10 +44,11 @@ exports.createTable = async (req, res) => {
     }
 
     const newTable = new TableModal({
-      tableName,
+      totalTable,
       tableNumber,
-      tableChairs,
-      no_of_person,
+      totalChairs,
+      capacity,
+      floorNumber,
       floor: floor._id,
       floorUid
     });
@@ -54,7 +57,7 @@ exports.createTable = async (req, res) => {
 
     // Update the floor by adding the tableId to its tables array
     floor.tables = floor.tables || [];
-    floor.tables.push(savedTable._id);  // Add the newly created table's ID to the floor's tables array
+    floor.tables.push(savedTable._id);  // Add the new created table's ID to the floor's tables array
 
     // Save the updated floor
     await floor.save();

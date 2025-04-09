@@ -12,8 +12,7 @@ exports.createCustomer = async (req, res) => {
     const {
       customerName,
       customerEmail,
-      customerPhoneNumber,
-      // tableId,
+      customerNumber,
       orderType,
       customerStatus,
       tableNumber,
@@ -21,9 +20,7 @@ exports.createCustomer = async (req, res) => {
     } = req.body;
 
     if (!orderType) {
-      return res
-        .status(404)
-        .json({ success: false, message: "All fields are required" });
+      return res.status(400).json({ success: false, message: "All fields are required" });
     }
 
     // Validate order type
@@ -45,13 +42,12 @@ exports.createCustomer = async (req, res) => {
         return res.status(400).json({ message: "This table is already reserved" });
       }
     }
-
+   
     // Add new costomer
     const customer = await CustomerModal.create({
       customerName,
       customerEmail,
-      customerPhoneNumber,
-      // tableId,
+      customerNumber,
       orderType,
       customerStatus,
       tableNumber: orderType === "Dine in" ? tableNumber : null,

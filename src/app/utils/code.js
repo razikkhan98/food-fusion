@@ -28,9 +28,10 @@ const generateCode = (role, sequence, mobileNum) => {
 
 // Generate Floor uid 
 // Example :- zomaSec2  
-  const generateFloorUid = (restaurantName, floorName, floorNumber) => {
-    const floorNumberStr = String(floorNumber);
-  return `${restaurantName.slice(0, 4)}${floorName.slice(0, 4)}${floorNumberStr.slice(0, 2)}`;
+const generateFloorUid = (restaurantName, floorName, floorNumber) => {
+const floorNumberStr = String(floorNumber);
+const uid =`${restaurantName.slice(0, 4)}${floorName.slice(0, 3)}${floorNumberStr.slice(0, 2)}`;
+return uid.toLowerCase();
 };
 
 

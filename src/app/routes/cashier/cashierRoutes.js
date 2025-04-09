@@ -46,8 +46,7 @@ router.get("/getCustomerById/:id",validateToken, customerController.getCustomerB
 router.post("/createMenu",menuController.addMenu);
 // Get All Menu
 router.get("/getAllMenu",menuController.getAllMenu);
-// Route to search for a menu item by name or code
-// router.get('/menu/search', menuController.searchMenu);
+
 
 
 // Order

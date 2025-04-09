@@ -1,6 +1,7 @@
 const FloorModal = require("../../models/floorModal");
 const { generateFloorUid } = require("../../../app/utils/code");
 
+
 /**
  * Create a new floor
  * @param {Object} req - Express request object
@@ -22,8 +23,16 @@ exports.createFloor = async (req, res) => {
     
     //Generate floor UID
     const floorUid = generateFloorUid(restaurantName, floorName, floorNumber);
-    // console.log(floorUid);
     
+    // Check if floor already exists
+    const existingFloor = await FloorModal.findOne({ floorUid });
+    
+    if (existingFloor) {
+      return res.status(400).json({success: false,
+        message: `Floor number ${existingFloor.floorNumber}(${existingFloor.floorName}) already exists.`});
+      
+}
+
     // Create new user
     const floor = await FloorModal.create({
           restaurantName,
