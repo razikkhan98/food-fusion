@@ -20,6 +20,7 @@ exports.createFloor = async (req, res) => {
         message: "All required fields: restaurantName, floorName, floorNumber, or floorCapacity.",
       });
     }
+
     
     //Generate floor UID
     const floorUid = generateFloorUid(restaurantName, floorName, floorNumber);
@@ -30,8 +31,8 @@ exports.createFloor = async (req, res) => {
     if (existingFloor) {
       return res.status(400).json({success: false,
         message: `Floor number ${existingFloor.floorNumber}(${existingFloor.floorName}) already exists.`});
-      
-}
+      }
+
 
     // Create new user
     const floor = await FloorModal.create({

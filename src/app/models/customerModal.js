@@ -60,9 +60,20 @@ const customerSchema = new mongoose.Schema(
         ref: "Order",
       },
     ],
+    // tableId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "Table",
+    // },
     tableId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Table",
+      default: null,
+    },
+
+    floorUid: {
+      type: String,
+      ref: "Floor",
+      // default: null,
     },
   },
   {

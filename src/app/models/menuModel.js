@@ -55,7 +55,19 @@ const menuSchema = new mongoose.Schema({
   // menuID: { type: mongoose.Schema.Types.ObjectId },
   floorName: String,  
   tableNumber: Number, 
-  orderID: { type: Number, default: null},
+  orderID: { type: String, default: null},
+  status: {
+    type: String,
+    trim: true,
+    default: "Order making",
+    enum: [
+      "empty",
+      "Order pending",
+      "Order making",
+      "Table reserved",
+      "Order completed"
+    ],
+  },
   categories: [
     {
       categoriesName: { type: String, required: true },
@@ -72,8 +84,7 @@ const menuSchema = new mongoose.Schema({
             {
               addonName: String,  
               addonAmount: Number, 
-              addonQuantity: Number, 
-              addonNotes: String   
+              addonQuantity: Number
             }
           ]
         }
