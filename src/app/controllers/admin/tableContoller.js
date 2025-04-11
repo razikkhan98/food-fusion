@@ -23,10 +23,9 @@ exports.createTable = async (req, res) => {
       // Check if the floorId exists
       const floor = await floorModal.findById(floorId);
       if (!floor) {
-        res.status(404).json({
+        return res.status(404).json({
           message: `No floor found with ID: ${floorId}`,
         });
-        return;
       }
       
 
@@ -36,11 +35,11 @@ exports.createTable = async (req, res) => {
       floor: floor._id,
     });
     if (existingTable) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: `A table with number ${tableNumber} already exists.`,
       });
-      return;
+      
     }
 
     const newTable = new TableModal({
@@ -58,6 +57,7 @@ exports.createTable = async (req, res) => {
     // Update the floor by adding the tableId to its tables array
     floor.tables = floor.tables || [];
     floor.tables.push(savedTable._id);  // Add the new created table's ID to the floor's tables array
+
 
     // Save the updated floor
     await floor.save();

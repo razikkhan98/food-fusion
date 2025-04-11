@@ -4,7 +4,7 @@ const floorSchema = new mongoose.Schema(
   {
       floorUid:{
         type: String,
-        // required: true,
+        required: true,
         unique: true
       },
 

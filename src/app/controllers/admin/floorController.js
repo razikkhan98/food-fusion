@@ -1,7 +1,6 @@
 const FloorModal = require("../../models/floorModal");
 const { generateFloorUid } = require("../../../app/utils/code");
 
-
 /**
  * Create a new floor
  * @param {Object} req - Express request object
@@ -32,7 +31,6 @@ exports.createFloor = async (req, res) => {
       return res.status(400).json({success: false,
         message: `Floor number ${existingFloor.floorNumber}(${existingFloor.floorName}) already exists.`});
       }
-
 
     // Create new user
     const floor = await FloorModal.create({
