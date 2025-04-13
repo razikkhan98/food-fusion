@@ -9,11 +9,9 @@ const customerController = require("../../controllers/admin/customerController")
 
 
 // User Staff Register (No Token Required)
-router.post("/staff/register", registerController.register);
+router.post("/staff/register", registerController.register); 
 // User Login (No Token Required)
 router.post("/staff/login", loginController.loginUser);
-
-
 
 
 // Create Floor (Protected Routes)
@@ -26,7 +24,6 @@ router.get("/getFloorById/:id", floorController.getFloorById);
 router.put("/updateFloorById/:id", floorController.updateFloor);
 // Delete Floor By Floor Id (Single Floor) (Protected Routes)
 router.delete("/deleteFloorById/:id", floorController.deleteFloor);
-
 
 
 // Create Table (Protected Routes)

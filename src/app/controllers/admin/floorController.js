@@ -10,43 +10,69 @@ const { generateFloorUid } = require("../../../app/utils/code");
 
 exports.createFloor = async (req, res) => {
   try {
-    const { restaurantName, floorName, floorNumber, floorCapacity } = req.body;
-    
+    const { restaurantName, floorName, floorNumber, } = req.body;
+
     // Check if all required fields are provided
-    if (!restaurantName || !floorName || !floorNumber || !floorCapacity) {
+    if (!restaurantName || !floorName || !floorNumber ) {
       return res.status(400).json({
         success: false,
-        message: "All required fields: restaurantName, floorName, floorNumber, or floorCapacity.",
+        message:
+          "All required fields: restaurantName, floorName, floorNumber, or floorCapacity.",
       });
     }
 
-    
+
+
     //Generate floor UID
     const floorUid = generateFloorUid(restaurantName, floorName, floorNumber);
-    
-    // Check if floor already exists
-    const existingFloor = await FloorModal.findOne({ floorUid });
-    
-    if (existingFloor) {
-      return res.status(400).json({success: false,
-        message: `Floor number ${existingFloor.floorNumber}(${existingFloor.floorName}) already exists.`});
-      }
+
+    // Check if floor number already exists for the same restaurant
+    const existingFloorNumber = await FloorModal.findOne({
+      restaurantName,
+      floorNumber,
+    });
+    if (existingFloorNumber) {
+      return res.status(400).json({
+        success: false,
+        message: `Floor number ${existingFloorNumber.floorNumber} already exists for restaurant ${restaurantName}.`,
+      });
+    }
+
+    // Check if floor name already exists for the same restaurant
+    const existingFloorName = await FloorModal.findOne({
+      restaurantName,
+      floorName,
+    });
+    if (existingFloorName) {
+      return res.status(400).json({
+        success: false,
+        message: `Floor number ${existingFloorName.floorName} already exists for restaurant ${restaurantName}.`,
+      });
+    }
+
+    // Calculate floor capacity in Toal Chairs in this floor fllorCapacity
+
+
+
 
     // Create new user
     const floor = await FloorModal.create({
-          restaurantName,
-          floorName,
-          floorNumber,
-          floorCapacity,
-          floorUid,
-        });
+      restaurantName,
+      floorName,
+      floorNumber,
+      floorCapacity: 0, // Start at 0 — will increase as tables are added
+      floorUid,
+    });
 
-    res.status(201).json({ success: true, message: "Add new floor successfully" ,data: floor });
+    res.status(201).json({
+      success: true,
+      message: "Add new floor successfully",
+      data: floor,
+    });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-
 
 /**
  * Get all floors
@@ -54,15 +80,32 @@ exports.createFloor = async (req, res) => {
  * @param {Object} res - Express response object
  */
 
-exports.getAllFloors = async (req ,res) => {
-  const floors = await FloorModal.find().populate("tables");
+// exports.getAllFloors = async (req, res) => {
+//   const floors = await FloorModal.find().populate("tables");
 
-  res.status(200).json({
-    success: true,
-    count: floors.length,
-    data: floors,
-  });
-};
+//   res.status(200).json({
+//     success: true,
+//     count: floors.length,
+//     data: floors,
+//   });
+// };
+
+
+exports.getAllFloors = async (req, res) => {
+  try {
+    const floors = await FloorModal.find().populate("tables");
+    res.status(200).json({
+      success: true,
+      count: floors.length,
+      data: floors,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+
+
 
 
 /**
@@ -84,7 +127,6 @@ exports.getFloorById = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
 
 /**
  * Update a floor by ID
@@ -109,7 +151,6 @@ exports.updateFloor = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-
 
 /**
  * Delete a floor by ID
