@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const customerSchema = new mongoose.Schema(
   {
+    customerUid:{
+      type: String,
+      required: true,
+      unique: true
+    },
     customerName: {
       type: String,
       required: [true, "Customer name is required"],
@@ -53,7 +58,7 @@ const customerSchema = new mongoose.Schema(
     deliveryAddress: {
       type: String,
       default: null
-    },
+    }, 
     orders: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -63,6 +68,18 @@ const customerSchema = new mongoose.Schema(
     tableId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Table",
+      default: null,
+    },
+    floorUid:{
+      type: String,
+      required: true,
+      unique: true,
+      ref: "Floor"
+    },
+    menuId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Menu",
+      default: null
     },
   },
   {

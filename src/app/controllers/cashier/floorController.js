@@ -7,7 +7,7 @@ const FloorModal = require("../../models/floorModal");
  */
 exports.getFloors = async (req, res) => {
   try {
-    const floors = await FloorModal.find();
+    const floors = await FloorModal.find().populate("tables");
     res.status(200).json({ success: true, data: floors });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -22,7 +22,7 @@ exports.getFloors = async (req, res) => {
  */
 exports.getFloorById = async (req, res) => {
   try {
-    const floor = await FloorModal.findById(req.params.id);
+    const floor = await FloorModal.findById(req.params.id).populate("tables").populate("customers");
     if (!floor) {
       return res
         .status(404)

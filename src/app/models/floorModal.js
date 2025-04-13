@@ -4,14 +4,13 @@ const floorSchema = new mongoose.Schema(
   {
       floorUid:{
         type: String,
-        // required: true,
+        required: true,
         unique: true
       },
 
     restaurantName: {
       type: String,
       required: [true, "Restaurant name is required"],
-      unique: true,
       trim: true,
     },
 
@@ -30,7 +29,7 @@ const floorSchema = new mongoose.Schema(
     floorCapacity: {
       type: Number,
       required: [true, "Floor capacity is required"],
-      min: [20, "Floor capacity must be at least 20"],
+     
     },
     tables: [
       {

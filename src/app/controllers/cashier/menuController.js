@@ -105,13 +105,16 @@ const menuModel = require("../../models/menuModel");
 try{
 const menuData = req.body;
 
+const generateOrderID = `ORD-${Date.now()}`; // Simple order ID generation
+
 // Create new menu 
 const newMenu = new menuModel({
   customerID: menuData.customerID,
   // menuID: menuData.menuID,
   floorName: menuData.floorName || null,
   tableNumber: menuData.tableNumber || null,
-  orderID: menuData.orderID,
+  orderID:generateOrderID,
+  // orderID: menuData.orderID,
   categories: menuData.categories
 });
 await newMenu.save();

@@ -7,7 +7,7 @@ const tablesController = require("../../controllers/cashier/tableController");
 const customerController = require("../../controllers/cashier/customerController");
 const menuController = require("../../controllers/cashier/menuController");
 const previousOrderController = require("../../controllers/cashier/previousOrderController");
-const orderController = require("../../controllers/cashier/orderController");
+// const orderController = require("../../controllers/cashier/orderController");
 const billController = require("../../controllers/cashier/billController");
 const paymentController = require("../../controllers/cashier/paymentController");
 
@@ -50,7 +50,9 @@ router.get("/getAllMenu",menuController.getAllMenu);
 
 
 // Order
-router.post("/orderSendtoKitchen", orderController.userOrder) 
+// router.post("/orderSendtoKitchen", orderController.userOrder) 
+
+
 
 // All Previous Order in this customer 
 // router.post("/previous/order", previousOrderController.createPreviousOrder);

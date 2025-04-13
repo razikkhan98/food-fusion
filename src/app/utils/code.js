@@ -47,20 +47,11 @@ const generateMenuCode = (name) => {
 };
 
 
-
-
-// // Generate order Id
-
-// const generateOrderId = async () => {
-  
-//   const counter = await orderModel.findByIdAndUpdate(
-//     { _id: 'orderID' },
-//     { $inc: { sequence_value: 1 } }, // Atomic increment
-//     { new: true, upsert: true }      // Create if not exists
-//   );
-// console.log(counter);
-//   return `ORD${counter.sequence_value}`
-// };
+const generateCustomerUid = (customerName, customerNumber) => {
+  const customerNumberStr = String(customerNumber);
+  const uniqueid = `${customerName.slice(0,4)}${customerNumberStr.slice(0,4)}`;
+  return uniqueid.toLowerCase();
+};
 
 // generateOrderId
-module.exports = { generateCode, generateFloorUid, generateMenuCode };
+module.exports = { generateCode, generateFloorUid, generateMenuCode, generateCustomerUid };

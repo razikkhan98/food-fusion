@@ -2,11 +2,6 @@ const mongoose = require("mongoose");
 
 const tableSchema = mongoose.Schema(
   {
-    totalTable: {  
-      type: Number,
-      required: true,
-    },
-
     tableNumber: {
       type: Number,
       required: true,
@@ -16,9 +11,7 @@ const tableSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    capacity: {
-      type: Number,
-    },
+
     floorNumber: {
       type: Number,
       required: true,
@@ -27,15 +20,15 @@ const tableSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
     },
-    floorUid:{
+    floorUid: {
       type: String,
       required: true,
-      unique: true
+     
     },
     floor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Floor",
-      default: null
+      default: null,
     },
   },
   {
