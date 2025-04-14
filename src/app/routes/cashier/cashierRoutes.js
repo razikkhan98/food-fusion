@@ -7,7 +7,7 @@ const tablesController = require("../../controllers/cashier/tableController");
 const customerController = require("../../controllers/cashier/customerController");
 const menuController = require("../../controllers/cashier/menuController");
 const previousOrderController = require("../../controllers/cashier/previousOrderController");
-// const orderController = require("../../controllers/cashier/orderController");
+const orderController = require("../../controllers/cashier/orderController");
 const billController = require("../../controllers/cashier/billController");
 const paymentController = require("../../controllers/cashier/paymentController");
 
@@ -35,7 +35,7 @@ router.get("/getTableById/:id",validateToken, tablesController.getTableById);
 
 
 // Create Customer (Protected Routes)
-router.post("/createCustomer",validateToken, customerController.createCustomer);
+router.post("/createCustomer", customerController.createCustomer);
 // Get All Customer (Protected Routes)
 router.get("/GetAllCustomers",validateToken, customerController.getAllCustomers);
 // Get Customer By Customer Id (Single Customer) (Protected Routes)
@@ -50,7 +50,9 @@ router.get("/getAllMenu",menuController.getAllMenu);
 
 
 // Order
-// router.post("/orderSendtoKitchen", orderController.userOrder) 
+router.post("/todayorder", orderController.todayOrder);
+
+router.post("/orderSendtoKitchen", orderController.userOrder) 
 
 
 

@@ -2,6 +2,8 @@ const CustomerModal = require("../../models/customerModal");
 const floorModal = require("../../models/floorModal");
 const TableModal = require("../../models/tableModal");
 const menuModel = require("../../models/menuModel");
+const TodayOrderModal = require("../../models/todayOrderModal");
+
 const { generateCustomerUid } = require("../../../app/utils/code");
 
 /**
@@ -10,6 +12,101 @@ const { generateCustomerUid } = require("../../../app/utils/code");
  * @param {Object} req.body - Customer data (customerName,customerEmail,customerPhoneNumber,customerTableId)
  * @param {Object} res - Express response message:(Customer registered successfully)
  */
+// exports.createCustomer = async (req, res) => {
+//   try {
+//     const {
+//       customerName,
+//       customerEmail,
+//       customerNumber,
+//       orderType,
+//       floorName,
+//       tableNumber,
+//       deliveryAddress,
+
+//     } = req.body;
+
+//     if (!orderType) {
+//       return res.status(400).json({ success: false, message: "All fields are required" });
+//     }
+
+//     // Validate order type
+//     if (orderType === 'Dine in' && !tableNumber) {
+//       return res.status(400).json({ message: "Table number is required for dine-in orders" });
+//     }
+
+//     if (orderType === 'Delivery' && !deliveryAddress) {
+//       return res.status(400).json({ message: "Address is required for delivery orders" });
+//     }
+
+//     // If orderType is "Dine in", check if the tableNumber already exists
+//     if (orderType === 'Dine in') {
+//       const existingTable = await TableModal.findOne({ tableNumber });
+//       console.log(existingTable);
+
+//       if (existingTable && existingTable.status === 'reserved') {
+//         return res.status(400).json({ message: "This table is already reserved" });
+//       }
+//     }
+
+//     // Generate a unique UID
+//     const customerUid = generateCustomerUid(customerName, customerNumber);
+
+//     // Check if floor already exists
+//     const existingCustomer = await CustomerModal.findOne({ customerUid });
+
+//     if (existingCustomer) {
+//       return res.status(400).json({success: false, message: "Customer already exists."});
+//     }
+
+//     // Check if floor exists
+//     const floor = await floorModal.findOne({floorUid});
+//     if (!floor) {
+//       return res.status(404).json({ message: "floorUid not found." });
+//     }
+
+//       //Check if table already exists
+//       const table = await TableModal.findById(tableId);
+//       if(!table){
+//         return res.status(400).json({message:"TAble ID not found!"});
+//       }
+
+//       //Check if Menu already exists
+//       const existingMenu = await menuModel.findById(menuId);
+//       if(!existingMenu){
+//          return res.status(400).json({message: "Menu ID not found!"});
+//       }
+
+//     // Add new costomer
+//     const customer = await CustomerModal.create({
+//       customerName,
+//       customerEmail,
+//       customerNumber,
+//       orderType,
+//       customerStatus,
+//       tableNumber: orderType === "Dine in" ? tableNumber : null,
+//       deliveryAddress: orderType === "Delivery" ? deliveryAddress : null,
+
+//       customerUid,
+
+//       menuId
+//     });
+//     await customer.save();
+
+//     // If Dine in order, update the table status to 'reserved'
+//     if (orderType === 'Dine in' && tableNumber) {
+//       const table = await TableModal.findOneAndUpdate(
+//         { tableNumber },
+//         { status: 'reserved', customerId: customer._id }, // Mark table as reserved and link it to the customer
+//         { new: true }
+//       );
+//     }
+
+//     res.status(201).json({ success: true, message: "Customer registered successfully", data: customer });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
 exports.createCustomer = async (req, res) => {
   try {
     const {
@@ -17,101 +114,109 @@ exports.createCustomer = async (req, res) => {
       customerEmail,
       customerNumber,
       orderType,
-      customerStatus,
+      floorName,
       tableNumber,
       deliveryAddress,
-      floorUid,
-      tableId,
-      menuId 
     } = req.body;
 
     if (!orderType) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Order type is required" });
     }
 
-    // Validate order type
-    if (orderType === 'Dine in' && !tableNumber) {
-      return res.status(400).json({ message: "Table number is required for dine-in orders" });
+    if (orderType === "Dine in" && !tableNumber) {
+      return res
+        .status(400)
+        .json({ message: "Table number is required for dine-in orders" });
     }
 
-    if (orderType === 'Delivery' && !deliveryAddress) {
-      return res.status(400).json({ message: "Address is required for delivery orders" });
+    if (orderType === "Delivery" && !deliveryAddress) {
+      return res
+        .status(400)
+        .json({ message: "Delivery address is required for delivery orders" });
     }
 
+    // Validate dine-in table
+    let table = null;
+    if (orderType === "Dine in") {
+      table = await TableModal.findOne({ tableNumber, floorName });
 
-    // If orderType is "Dine in", check if the tableNumber already exists
-    if (orderType === 'Dine in') {
-      const existingTable = await TableModal.findOne({ tableNumber });
-      console.log(existingTable);
+      if (!table) {
+        return res
+          .status(404)
+          .json({ message: "Table not found on the specified floor." });
+      }
 
-      if (existingTable && existingTable.status === 'reserved') {
-        return res.status(400).json({ message: "This table is already reserved" });
+      if (
+        table.tablestatus === "Order pending" ||
+        table.tablestatus === "reserved"
+      ) {
+        return res
+          .status(400)
+          .json({ message: "This table is already in use." });
       }
     }
-    
-    // Generate a unique UID
+
+    // Generate UID and check duplication
     const customerUid = generateCustomerUid(customerName, customerNumber);
-    
-    // Check if floor already exists
-    const existingCustomer = await CustomerModal.findOne({ customerUid });
-    
-    if (existingCustomer) {
-      return res.status(400).json({success: false, message: "Customer already exists."});
-    }
-    
-    // Check if floor exists 
-    const floor = await floorModal.findOne({floorUid});
-    if (!floor) {
-      return res.status(404).json({ message: "floorUid not found." });
-    }
-    console.log(floor)
+    // const existingCustomer = await CustomerModal.findOne({ customerUid });
 
-      //Check if table already exists
-      const table = await TableModal.findById(tableId);
-      if(!table){
-        return res.status(400).json({message:"TAble ID not found!"});
-      }
+    // if (existingCustomer) {
+    //   return res.status(400).json({ success: false, message: "Customer already exists." });
+    // }
 
-      //Check if Menu already exists
-      const existingMenu = await menuModel.findById(menuId);
-      if(!existingMenu){
-         return res.status(400).json({message: "Menu ID not found!"});
-      }
-
-    // Add new costomer
+    // Create new customer
     const customer = await CustomerModal.create({
       customerName,
       customerEmail,
       customerNumber,
       orderType,
-      customerStatus,
       tableNumber: orderType === "Dine in" ? tableNumber : null,
       deliveryAddress: orderType === "Delivery" ? deliveryAddress : null,
-      floorUid,
+      floorName,
       customerUid,
-      tableId,
-      menuId
     });
+
+    // Save customer
     await customer.save();
 
+    // Create today's order if not exists
+    let todayOrder = await TodayOrderModal.findOne().sort({ createdAt: -1 });
 
-    // const table = await TableModal.findById({ _id: tableId });
-    // console.log("findTable: ", table);
-
-    // if (customer?._id) table.customerId = customer?._id;
-    // if (customer?.orderType === "Dine in") table.tableStatus = "Reserved";
-
-
-    // If Dine in order, update the table status to 'reserved'
-    if (orderType === 'Dine in' && tableNumber) {
-      const table = await TableModal.findOneAndUpdate(
-        { tableNumber },
-        { status: 'reserved', customerId: customer._id }, // Mark table as reserved and link it to the customer
-        { new: true }
-      );
+    if (!todayOrder) {
+      todayOrder = new TodayOrderModal({});
     }
 
-    res.status(201).json({ success: true, message: "Customer registered successfully", data: customer });
+    const orderEntry = {
+      customer: customer._id,
+      customerName: customer.customerName,
+      tableNumber: customer.tableNumber || null,
+      deliveryAddress: customer.deliveryAddress || null,
+      menuId: customer.menuId,
+    };
+
+    if (orderType === "Dine in") {
+      todayOrder.dine.push(orderEntry);
+
+      // Optional: Update table status
+      await TableModal.findOneAndUpdate(
+        { tableNumber },
+        { tablestatus: "Order pending", customerId: customer._id }
+      );
+    } else if (orderType === "Take away") {
+      todayOrder.takeaway.push(orderEntry);
+    } else if (orderType === "Delivery") {
+      todayOrder.delivery.push(orderEntry);
+    }
+
+    await todayOrder.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Customer registered successfully",
+      data: customer,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -124,8 +229,12 @@ exports.createCustomer = async (req, res) => {
  */
 exports.getAllCustomers = async (req, res) => {
   try {
-    const customers = await CustomerModal.find().populate("tables").populate("floorUid");
-    res.status(200).json({ success: true, count: customers.length, data: customers });
+    const customers = await CustomerModal.find()
+      .populate("tables")
+      .populate("floorUid");
+    res
+      .status(200)
+      .json({ success: true, count: customers.length, data: customers });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -139,7 +248,9 @@ exports.getAllCustomers = async (req, res) => {
  */
 exports.getCustomerById = async (req, res) => {
   try {
-    const customer = await CustomerModal.findById(req.params.id).populate("tables");
+    const customer = await CustomerModal.findById(req.params.id).populate(
+      "tables"
+    );
     if (!customer) {
       return res
         .status(404)

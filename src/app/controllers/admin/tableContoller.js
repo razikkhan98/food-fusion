@@ -7,21 +7,89 @@ const TableModal = require("../../models/tableModal");
  * @param {Object} req.body - Table data (tableName, tableNumber, tableChairs,  customerId, no_of_person, floor, customers)
  * @param {Object} res - Express response object
  */
+// exports.createTable = async (req, res) => {
+//   try {
+//     const { tableNumber, totalChairs, floorUid } = req.body;
+
+//     // Check if all required fields are provided
+//     if (!tableNumber || !totalChairs || !floorUid) {
+//       return res.status(400).json({
+//         success: false,
+//         message:
+//           "Required fields: totalTable, tableNumber, totalChairs, floorNumber.",
+//       });
+//     }
+
+
+//     // Check if the total chairs is a valid number
+//     if (isNaN(totalChairs)) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Total chairs must be a valid number.",
+//       });
+//     }
+
+//     // Check if the floorId exists
+//     const floor = await floorModal.findOne({floorUid});
+//     if (!floor) {
+//       return res.status(404).json({
+//         message: `No floor found with UID: ${floorUid}`,
+//       });
+//     }
+
+//     // Check if the table number is already in use
+//     const existingTable = await TableModal.findOne({
+//       tableNumber,
+//       floor: floor._id,
+//     });
+//     if (existingTable) {
+//       return res.status(400).json({
+//         success: false,
+//         message: `A table with number ${tableNumber} already exists on this floor.`,
+//       });
+//     }
+
+//     const newTable = new TableModal({
+//       tableNumber,
+//       totalChairs,
+//       floorNumber:floor.floorNumber,
+//       floorName :floor.floorName,
+//       floor: floor._id,
+//       // floorUid,
+//       floorUid: floor.floorUid,
+
+//     });
+
+//     const savedTable = await newTable.save();
+
+//     // Update the floor by adding the tableId to its tables array
+//     floor.tables = floor.tables || [];
+//     floor.tables.push(savedTable._id); // Add the new created table's ID to the floor's tables array
+//     floor.floorCapacity = (floor.floorCapacity || 0) + totalChairs;
+
+//     // Save the updated floor
+//     await floor.save();
+
+//     res.status(201).json({ success: true, data: savedTable });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
 exports.createTable = async (req, res) => {
   try {
-    const { tableNumber, totalChairs, floorUid } = req.body;
+    const { tableNumber, totalChairs, floorUid, tablestatus } = req.body;
 
-    // Check if all required fields are provided
+    // Validate required fields
     if (!tableNumber || !totalChairs || !floorUid) {
       return res.status(400).json({
         success: false,
         message:
-          "Required fields: totalTable, tableNumber, totalChairs, floorNumber.",
+          "Required fields: tableNumber, totalChairs, floorUid.",
       });
     }
 
-
-    // Check if the total chairs is a valid number
+    // Validate chairs count
     if (isNaN(totalChairs)) {
       return res.status(400).json({
         success: false,
@@ -29,15 +97,15 @@ exports.createTable = async (req, res) => {
       });
     }
 
-    // Check if the floorId exists
-    const floor = await floorModal.findOne({floorUid});
+    // Find floor by floorUid
+    const floor = await floorModal.findOne({ floorUid });
     if (!floor) {
       return res.status(404).json({
         message: `No floor found with UID: ${floorUid}`,
       });
     }
 
-    // Check if the table number is already in use
+    // Check if table number already exists on this floor
     const existingTable = await TableModal.findOne({
       tableNumber,
       floor: floor._id,
@@ -49,25 +117,23 @@ exports.createTable = async (req, res) => {
       });
     }
 
+    // Create new table
     const newTable = new TableModal({
       tableNumber,
       totalChairs,
-      floorNumber:floor.floorNumber,
-      floorName :floor.floorName,
+      floorNumber: floor.floorNumber,
+      floorName: floor.floorName,
       floor: floor._id,
-      // floorUid,
       floorUid: floor.floorUid,
-
+      tablestatus: tablestatus || "empty", // Default to "empty" if not provided
     });
 
     const savedTable = await newTable.save();
 
-    // Update the floor by adding the tableId to its tables array
+    // Update floor: push new table ID and update capacity
     floor.tables = floor.tables || [];
-    floor.tables.push(savedTable._id); // Add the new created table's ID to the floor's tables array
+    floor.tables.push(savedTable._id);
     floor.floorCapacity = (floor.floorCapacity || 0) + totalChairs;
-
-    // Save the updated floor
     await floor.save();
 
     res.status(201).json({ success: true, data: savedTable });
@@ -75,6 +141,7 @@ exports.createTable = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 /**
  * Retrieve all tables

@@ -5,7 +5,7 @@ const customerSchema = new mongoose.Schema(
     customerUid:{
       type: String,
       required: true,
-      unique: true
+      
     },
     customerName: {
       type: String,
@@ -38,23 +38,15 @@ const customerSchema = new mongoose.Schema(
       default: "Dine in",
       enum: ["Dine in", "Take away", "Delivery"],
     },
+    floorName: {
+      type: String,
+      trim: true,
+    },
     tableNumber: {
       type: Number, 
     },
 
-    customerStatus: {
-      type: String,
-      trim: true,
-      // required: true,
-      default: "Order pending",
-      enum: [
-        "empty",
-        "Order pending",
-        "Order making",
-        "Table reserved",
-        "Order completed"
-      ],
-    },
+
     deliveryAddress: {
       type: String,
       default: null
@@ -65,17 +57,8 @@ const customerSchema = new mongoose.Schema(
         ref: "Order",
       },
     ],
-    tableId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Table",
-      default: null,
-    },
-    floorUid:{
-      type: String,
-      required: true,
-      unique: true,
-      ref: "Floor"
-    },
+   
+  
     menuId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Menu",

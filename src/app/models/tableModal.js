@@ -16,6 +16,22 @@ const tableSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    floorName: {
+      type: String,
+      required: true,
+    },
+    tablestatus: {
+      type: String,
+      trim: true,
+      enum: [
+        "empty",
+        "Order pending",
+        "Order making",
+        "Table reserved",
+        "Order completed"
+      ],
+      default: "empty"
+    },
     customerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
