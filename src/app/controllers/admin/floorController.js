@@ -21,8 +21,6 @@ exports.createFloor = async (req, res) => {
       });
     }
 
-
-
     //Generate floor UID
     const floorUid = generateFloorUid(restaurantName, floorName, floorNumber);
 
@@ -49,10 +47,6 @@ exports.createFloor = async (req, res) => {
         message: `Floor number ${existingFloorName.floorName} already exists for restaurant ${restaurantName}.`,
       });
     }
-
-    // Calculate floor capacity in Toal Chairs in this floor fllorCapacity
-
-
 
 
     // Create new user

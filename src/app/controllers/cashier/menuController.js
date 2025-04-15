@@ -1,128 +1,113 @@
-// const asyncHandler = require("express-async-handler");
-// const menuModel = require("../../models/menuModel");
-// const { generateMenuCode } = require("../../../app/utils/code");
-
-// exports.addMenu = asyncHandler(async (req, res) => {
-//   const { name, category, subcategories } = req.body;
-//   try {
-//     // Validate required fields
-//     if (!category || !subcategories || !subcategories.length) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Category and subcategory are required",
-//       });
-//     }
-
-//     // Check if the same menu item (category + subcategory name) already exists
-//     const duplicate = await menuModel.findOne({
-//       category,
-//       "subcategories.name": { $in: subcategories.map((sub) => sub.name) },
-//     });
-
-//     if (duplicate) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Menu item with the same name already exists in this category",
-//       });
-//     }
-
-//     // Generate a menu code (e.g., "Cheese Pizza" => "C P")
-//     const menuCode = generateMenuCode(name);
-//     console.log("code: ", menuCode);
-
-//     const menu = await menuModel.create({
-//       name,
-//       category,
-//       menuCode,
-//       subcategories,
-//     });
-//     await menu.save();
-//     // const savedMenu = await menu.save();
-//     res.status(201).json({
-//       success: true,
-//       message: "Menu item created successfully",
-//       data: menu
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: "Failed to create menu item",
-//       error: error.message
-//     });
-//   }
-// });
-
-// // Search for menu items (by name or code)
-// exports.searchMenu = async (req, res) => {
-//   const { query } = req.query; // The search query (e.g., name or code)
-//   console.log(query)
-
-//   // Check if query is a valid non-empty string
-//   if (!query || typeof query !== 'string' || query.trim() === '') {
-//     return res.status(400).json({
-//       success: false,
-//       message: 'Invalid or missing search query',
-//     });
-//   }
-
-//   try {
-//     const menus = await menuModel.find({
-//       $or: [
-//         { name: { $regex: query, $options: 'i' } },  // Search by name (case-insensitive)
-//         { menuCode: { $regex: query, $options: 'i' } },  // Search by menu code
-//       ],
-//     });
-
-//     if (menus.length === 0) {
-//       return res.status(404).json({
-//         success: false,
-//         message: 'No menu items found',
-//       });
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Menus found successfully",
-//       data: menus,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: 'Error while searching for menus',
-//       error: error.message,
-//     });
-//   }
-// };
+const asyncHandler = require("express-async-handler");
+const generateOrderID = require("../../utils/generateOrderID");
+const menuModel = require("../../models/menuModel");
+const TableModal = require("../../models/tableModal");
+const TodayOrderModal = require("../../models/todayOrderModal");
+const CustomerModal = require("../../models/customerModal");
 
 // Cashier Add Menu
-const menuModel = require("../../models/menuModel");
-exports.addMenu = async (req, res) => {
+exports.addMenu = asyncHandler(async (req, res, next) => {
   try {
-    const menuData = req.body;
+    const { customerUid, floorName, tableNumber, categories } = req.body;
 
-    const generateOrderID = `ORD-${Date.now()}`; // Simple order ID generation
+    if (!customerUid || !categories || !Array.isArray(categories)) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
 
-    // Create new menu
+    // ✅ Find customer by UID to get MongoDB _id
+    const customer = await CustomerModal.findOne({ customerUid });
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    const orderID = await generateOrderID();
+
     const newMenu = new menuModel({
-      customerID: menuData.customerID,
-      // menuID: menuData.menuID,
-      floorName: menuData.floorName || null,
-      tableNumber: menuData.tableNumber || null,
-      orderID: generateOrderID,
-      // orderID: menuData.orderID,
-      categories: menuData.categories,
+      customerID: customer._id,
+      customerUid,
+      floorName,
+      tableNumber,
+      orderID,
+      categories,
     });
-    await newMenu.save();
 
-    res.status(400).json({ message: "Add Menu Successfully!", data: newMenu });
+    const savedMenu = await newMenu.save();
+
+    // ✅ Update Table Status
+    if (tableNumber) {
+      await TableModal.findOneAndUpdate(
+        { tableNumber },
+        { tablestatus: "Order making" },
+        { new: true }
+      );
+    }
+
+    // ✅ Create entry in OrderTable collection
+    await OrderTable.create({
+      orderID,
+      customerID: customer._id,
+      floorName,
+      tableNumber,
+      categories,
+      status: "Order making", // Default status when an order is being made
+    });
+
+    // ✅ Update TodayOrder entry status
+    const todayOrder = await TodayOrderModal.findOne({
+      $or: [
+        { "dine.customerId": customer._id },
+        { "takeaway.customerId": customer._id },
+        { "delivery.customerId": customer._id },
+      ],
+    });
+
+    if (todayOrder) {
+      let updated = false;
+
+      todayOrder.dine?.forEach((entry) => {
+        if (entry.customerId.toString() === customer._id.toString()) {
+          entry.status = "Order making";
+          updated = true;
+        }
+      });
+
+      todayOrder.takeaway?.forEach((entry) => {
+        if (entry.customerId.toString() === customer._id.toString()) {
+          entry.status = "Order making";
+          updated = true;
+        }
+      });
+
+      todayOrder.delivery?.forEach((entry) => {
+        if (entry.customerId.toString() === customer._id.toString()) {
+          entry.status = "Order making";
+          updated = true;
+        }
+      });
+
+      if (updated) {
+        todayOrder.markModified("dine");
+        todayOrder.markModified("takeaway");
+        todayOrder.markModified("delivery");
+        await todayOrder.save();
+      }
+    }
+
+    // ✅ Push the menu ID to customer.orders
+    customer.orders.push(savedMenu._id);
+    await customer.save();
+
+    // ✅ Return full orders by populating the array
+    const updatedCustomer = await CustomerModal.findById(customer._id).populate(
+      "orders"
+    );
+
+    res.status(201).json({ success: true, data: updatedCustomer });
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: "Failed to create Menu", error: error.message });
+    console.log("error: ", error);
+    res.status(500).json({ success: false, message: error.message });
   }
-};
+});
 
 /**
  * Retrieve all menu
@@ -137,3 +122,207 @@ exports.getAllMenu = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// Front
+
+// import React, { useState } from "react";
+// import axios from "axios";
+
+// const AddMenuForm = () => {
+//   const [formData, setFormData] = useState({
+//     customerID: "",
+//     floorName: "",
+//     tableNumber: "",
+//     categories: [
+//       {
+//         categoriesName: "",
+//         subcategories: [
+//           {
+//             subcategoriesName: "",
+//             subcategoriesAmount: 0,
+//             subcategoriesType: "",
+//             quantity: 1,
+//             totalAmount: 0,
+//             totalItemTax: 0,
+//             discount: "",
+//             extraAddon: [
+//               {
+//                 addonName: "",
+//                 addonAmount: 0,
+//                 addonQuantity: 0,
+//                 addonNotes: "",
+//               },
+//             ],
+//           },
+//         ],
+//       },
+//     ],
+//   });
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     try {
+//       const res = await axios.post("/api/add-menu", formData);
+//       alert("Menu Added Successfully!");
+//       console.log(res.data);
+//     } catch (error) {
+//       console.error(error);
+//       alert("Error adding menu");
+//     }
+//   };
+
+//   return (
+//     <form onSubmit={handleSubmit} style={{ padding: 20 }}>
+//       <h2>Add Menu</h2>
+
+//       <input
+//         type="text"
+//         placeholder="Customer ID"
+//         value={formData.customerID}
+//         onChange={(e) => setFormData({ ...formData, customerID: e.target.value })}
+//         required
+//       />
+//       <input
+//         type="text"
+//         placeholder="Floor Name"
+//         value={formData.floorName}
+//         onChange={(e) => setFormData({ ...formData, floorName: e.target.value })}
+//         required
+//       />
+//       <input
+//         type="number"
+//         placeholder="Table Number"
+//         value={formData.tableNumber}
+//         onChange={(e) => setFormData({ ...formData, tableNumber: e.target.value })}
+//         required
+//       />
+
+//       <hr />
+//       {formData.categories.map((cat, catIndex) => (
+//         <div key={catIndex}>
+//           <h4>Category</h4>
+//           <input
+//             type="text"
+//             placeholder="Category Name"
+//             value={cat.categoriesName}
+//             onChange={(e) => {
+//               const updated = [...formData.categories];
+//               updated[catIndex].categoriesName = e.target.value;
+//               setFormData({ ...formData, categories: updated });
+//             }}
+//             required
+//           />
+
+//           {cat.subcategories.map((sub, subIndex) => (
+//             <div key={subIndex} style={{ marginLeft: 20 }}>
+//               <h5>Subcategory</h5>
+//               <input
+//                 type="text"
+//                 placeholder="Subcategory Name"
+//                 value={sub.subcategoriesName}
+//                 onChange={(e) => {
+//                   const updated = [...formData.categories];
+//                   updated[catIndex].subcategories[subIndex].subcategoriesName = e.target.value;
+//                   setFormData({ ...formData, categories: updated });
+//                 }}
+//               />
+//               <input
+//                 type="number"
+//                 placeholder="Amount"
+//                 value={sub.subcategoriesAmount}
+//                 onChange={(e) => {
+//                   const updated = [...formData.categories];
+//                   updated[catIndex].subcategories[subIndex].subcategoriesAmount = Number(e.target.value);
+//                   setFormData({ ...formData, categories: updated });
+//                 }}
+//               />
+//               {/* Add other subcategory fields similarly */}
+
+//               {sub.extraAddon.map((addon, addonIndex) => (
+//                 <div key={addonIndex} style={{ marginLeft: 20 }}>
+//                   <h6>Extra Addon</h6>
+//                   <input
+//                     type="text"
+//                     placeholder="Addon Name"
+//                     value={addon.addonName}
+//                     onChange={(e) => {
+//                       const updated = [...formData.categories];
+//                       updated[catIndex].subcategories[subIndex].extraAddon[addonIndex].addonName = e.target.value;
+//                       setFormData({ ...formData, categories: updated });
+//                     }}
+//                   />
+//                   {/* Add other addon fields similarly */}
+//                 </div>
+//               ))}
+//             </div>
+//           ))}
+//         </div>
+//       ))}
+
+//       <br />
+//       <button type="submit">Submit Menu</button>
+//     </form>
+//   );
+// };
+
+// export default AddMenuForm;
+
+// {
+//   "customerID": "661ab9c9d9c3a2d343fbe16f",
+//   "floorName": "First Floor",
+//   "tableNumber": 5,
+//   "categories": [
+//     {
+//       "categoriesName": "Main Course",
+//       "subcategories": [
+//         {
+//           "subcategoriesName": "Paneer Butter Masala",
+//           "subcategoriesAmount": 250,
+//           "subcategoriesType": "Veg",
+//           "quantity": 2,
+//           "totalAmount": 500,
+//           "totaliteamTax": 50,
+//           "discount": "10%",
+//           "extraAddon": [
+//             {
+//               "addonName": "Extra Cheese",
+//               "addonAmount": 30,
+//               "addonQuantity": 1,
+//               "addonNotes": "Add on top"
+//             },
+//             {
+//               "addonName": "Spicy Sauce",
+//               "addonAmount": 20,
+//               "addonQuantity": 1,
+//               "addonNotes": "Serve separately"
+//             }
+//           ]
+//         },
+//         {
+//           "subcategoriesName": "Butter Naan",
+//           "subcategoriesAmount": 40,
+//           "subcategoriesType": "Veg",
+//           "quantity": 4,
+//           "totalAmount": 160,
+//           "totaliteamTax": 16,
+//           "extraAddon": []
+//         }
+//       ]
+//     },
+//     {
+//       "categoriesName": "Drinks",
+//       "subcategories": [
+//         {
+//           "subcategoriesName": "Sweet Lassi",
+//           "subcategoriesAmount": 70,
+//           "subcategoriesType": "Veg",
+//           "quantity": 2,
+//           "totalAmount": 140,
+//           "totaliteamTax": 14,
+//           "discount": "5%",
+//           "extraAddon": []
+//         }
+//       ]
+//     }
+//   ]
+// }

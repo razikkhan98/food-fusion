@@ -52,7 +52,6 @@ router.get("/getAllMenu",menuController.getAllMenu);
 // Order
 router.post("/todayorder", orderController.todayOrder);
 
-router.post("/orderSendtoKitchen", orderController.userOrder) 
 
 
 
