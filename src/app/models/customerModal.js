@@ -17,6 +17,7 @@ const customerSchema = new mongoose.Schema(
       required: [true, "Customer email is required"],
       unique: true,
       trim: true,
+      
       match: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
     },
     customerCountryCode: {
@@ -59,28 +60,28 @@ const customerSchema = new mongoose.Schema(
       type: String,
       default: null
     }, 
-    orders: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Order",
-      },
-    ],
-    tableId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Table",
-      default: null,
-    },
     floorUid:{
       type: String,
       required: true,
       unique: true,
       ref: "Floor"
     },
-    menuId: {
+    tableId: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Table",
+      default: null,
+    }],
+    menuId: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Menu",
       default: null
-    },
+    }],
+    orders: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order",
+      },
+    ],
   },
   {
     timestamps: true,
