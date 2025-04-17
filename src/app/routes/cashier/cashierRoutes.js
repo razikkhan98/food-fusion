@@ -11,10 +11,12 @@ const orderController = require("../../controllers/cashier/orderController");
 const billController = require("../../controllers/cashier/billController");
 const paymentController = require("../../controllers/cashier/paymentController");
 const registerController = require("../../controllers/admin/registerController");
+const scheduleOrderController = require("../../controllers/cashier/scheduleOrderController");
 
 // Token for routes
 const { validateToken } = require("../../middlewares/validateTokenHandler");
 const {protectedRoute} = require("../../middlewares/validatesession");
+const scheduleOrderModel = require("../../models/scheduleOrderModel");
 
 // Staff Login (No Token Required)
 router.post("/staff/login", loginController.loginUser);
@@ -62,6 +64,10 @@ router.get("/todayorder",orderController.todayOrder);
 router.post("/previous/order", previousOrderController.createPreviousOrder);
 // Get All Prevoius Order
 router.get("/getPreviousOrder/:customerNumber", previousOrderController.getOrderByNumber);
+
+
+//Sehdule Order in the customer 
+// router.post("/scheduleOrder", scheduleOrderController.addScheduleOrder);
 
 
 // Billing 
