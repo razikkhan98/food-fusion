@@ -4,6 +4,7 @@ const menuModel = require("../../models/menuModel");
 const TableModal = require("../../models/tableModal");
 const TodayOrderModal = require("../../models/todayOrderModal");
 const CustomerModal = require("../../models/customerModal");
+const OrderTable = require("../../models/OrderTableModal");
 
 // Cashier Add Menu
 exports.addMenu = asyncHandler(async (req, res, next) => {
@@ -32,7 +33,7 @@ exports.addMenu = asyncHandler(async (req, res, next) => {
     });
 
     const savedMenu = await newMenu.save();
-
+    
     // ✅ Update Table Status
     if (tableNumber) {
       await TableModal.findOneAndUpdate(
@@ -41,7 +42,7 @@ exports.addMenu = asyncHandler(async (req, res, next) => {
         { new: true }
       );
     }
-
+    
     // ✅ Create entry in OrderTable collection
     await OrderTable.create({
       orderID,

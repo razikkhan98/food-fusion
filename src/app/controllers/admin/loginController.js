@@ -14,56 +14,62 @@ const Session = require("../../models/session/sessionModel");
  */
 
 exports.loginUser = asyncHandler(async (req, res) => {
-  const { code } = req.body;
-
-  // Generate a unique session ID using uuid
-  const session = uuidv4();
-
-  // Validate that the code is provided
-  if (!code) return res.json({ message: "Code is required" });
-
-  // Find the user by the provided code
-  const user = await UserModel.findOne({ code });
-
-  if (!user) return res.json({ success: false, message: "Invalid code" });
-
-  // session Data Mongodb Database
-  const findSessionByUserId = await Session?.findOne({ userId: user?._id });
-
-  if (!findSessionByUserId) {
-    // Save the session to the database
-    await Session.create({
-      session,
-      userId: user._id,
-    });
+  const { code, role } = req.body;
+ 
+  // Validate inputs
+  if (!code || !role) {
+    return res.status(400).json({ message: "Code and role are required" });
   }
-
-  // update session Mongodb Database
-  if (findSessionByUserId?.session) {
-    await Session?.findOneAndUpdate(
-      { session: findSessionByUserId?.session },
-      {
-        $set: {
-          session,
-        },
-      },
+ 
+  // Find user by code and role
+  const user = await UserModel.findOne({ code, role });
+ 
+  if (!user) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Invalid code or role" });
+  }
+ 
+  // Generate a new unique session ID
+  const session = uuidv4();
+ 
+  // Check for existing session
+  const existingSession = await Session.findOne({ userId: user._id });
+ 
+  if (!existingSession) {
+    // Create new session
+    await Session.create({ session, userId: user._id });
+  } else {
+    // Update existing session
+    await Session.findOneAndUpdate(
+      { userId: user._id },
+      { $set: { session } },
       { new: true }
     );
   }
-
-  // Generate and send JWT token
+ 
+  // Generate JWT token
   const token = jwt.sign(
-    { user: { username: user?.fullname, email: user?.email, id: user?._id } },
+    {
+      user: {
+        username: user.fullname,
+        email: user.email,
+        id: user._id,
+      },
+    },
     process.env.JWT_SECRET,
-    { expiresIn: "30 day" }
+    { expiresIn: "30d" }
   );
-
-  // If the user is found, login is successful
+ 
+  // Send success response
   res.json({
     success: true,
     message: "Login successful",
     session,
-    user: { fullname: user?.fullname, role: user?.role },
+    user: {
+      fullname: user.fullname,
+      role: user.role,
+    },
     accessToken: token,
   });
 });

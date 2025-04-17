@@ -139,7 +139,7 @@ exports.getAllCustomers = async (req, res) => {
   try {
     const customers = await CustomerModal.find()
       .populate("tables")
-      .populate("floorUid");
+      // .populate("floorUid");
     res
       .status(200)
       .json({ success: true, count: customers.length, data: customers });

@@ -1,6 +1,6 @@
 const expressAsyncHandler = require("express-async-handler");
 // const {generateOrderId} = require("../../../app/utils/code");
-
+const TodayOrder = require("../../models/todayOrderModal");
 //  Create order send to kitchen
 exports.userOrder = expressAsyncHandler (async (req, res) => {
 

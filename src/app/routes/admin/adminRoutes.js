@@ -12,6 +12,8 @@ const customerController = require("../../controllers/admin/customerController")
 router.post("/staff/register", registerController.register); 
 // User Login (No Token Required)
 router.post("/staff/login", loginController.loginUser);
+// Get All User Staff 
+router.get("/staff/getAllUsers", registerController.getAllUsers);
 
 
 // Create Floor (Protected Routes)

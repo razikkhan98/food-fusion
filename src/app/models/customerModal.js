@@ -55,6 +55,13 @@ const customerSchema = new mongoose.Schema(
         ref: "Menu",
       },
     ],
+      tables: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Table",
+            default: null
+          }
+        ],
 
     // menuId: {
     //   type: mongoose.Schema.Types.ObjectId,

@@ -96,3 +96,15 @@ exports.register = asyncHandler(async (req, res, next) => {
     res.json({ message: "error", error: error.message });
   }
 });
+
+
+// Get All User Staff
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await userModel.find()
+
+    res.status(200).json({ success: true, data: users });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

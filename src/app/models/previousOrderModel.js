@@ -30,9 +30,11 @@ const previousOrderSchema = mongoose.Schema(
     },
     fullMenus:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "menus",
+        ref: "Menu",
         default: null
     }
+},{
+    timestamps: true,
 });
 
 module.exports = mongoose.model('PreviousOrder', previousOrderSchema);
