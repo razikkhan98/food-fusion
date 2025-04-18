@@ -9,7 +9,7 @@ const scheduleOrderSchema = new mongoose.Schema(
         },
         customerEmail: {
             type: String,
-            unique: true,
+            // unique: true,
             trim: true,
             match: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
         },
@@ -21,11 +21,13 @@ const scheduleOrderSchema = new mongoose.Schema(
             minlength: 10,
             maxlength: 10,
         },
-        customerDate: {
+        selectDate: {
             type: String,
+            required: true
         }, 
-        customerTime: {
+        selectTime: {
             type: String,
+            required: true  
         },
         orderType: {
             type: String,

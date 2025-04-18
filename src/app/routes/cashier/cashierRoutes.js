@@ -67,8 +67,9 @@ router.get("/getPreviousOrder/:customerNumber", previousOrderController.getOrder
 
 
 //Sehdule Order in the customer 
-// router.post("/scheduleOrder", scheduleOrderController.addScheduleOrder);
-
+router.post("/scheduleOrder", scheduleOrderController.addScheduleOrder);
+//Get All Schedule Order
+router.get("/getAllSecheduleOrder", scheduleOrderController.getAllScheduleOrder) 
 
 // Billing 
 router.post("/bill", billController.billingOrder);

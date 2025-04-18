@@ -92,7 +92,7 @@ exports.getOrderByNumber = async (req, res) => {
         }
         const customerOrder = await previousOrderModel.find({ customerNumber:number });
         if(!customerOrder || customerOrder.length === 0){
-            return res.status(400).json({ message: "Customer number not found" })
+            return res.status(400).json({status:400, message: "Customer number not found" })
         }
        
         res.status(200).json({ success: true, data: customerOrder });
